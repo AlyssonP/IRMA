@@ -11,6 +11,20 @@ def lerValoresArquivo(nome):
         listaValores.append(aux)
     return listaValores
 
+# Leitura de Arquivo SCE
+def lerValoresArquivoSCE(nome):
+    with open(nome) as ler:
+        lista = ler.read().split(";\n")
+    e = lista[0].split("\n")[2]
+    lista[0] = e
+    listaValores = []
+    for l in lista[:-1]:
+        aux = []
+        for n in l.split():
+            aux.append(float(n))
+        listaValores.append(aux)
+    return listaValores
+
 def calcularMedia(listaValores):
     l = [0,0,0,0,0,0]
     for lv in listaValores:
@@ -48,13 +62,18 @@ def desenharGraficoRGB(valores):
     plt.plot(rgbR[2], marker = 'o', linestyle = 'none', mec = 'b', mfc = 'w')
     plt.show()
 
+# mediaVermelho = calcularMedia(lerValoresArquivo("vermelho.txt"))
+# mediaAmarelo = calcularMedia(lerValoresArquivo("amarelo.txt"))
+# mediaAzul = calcularMedia(lerValoresArquivo("azul.txt"))
 
-mediaVermelho = calcularMedia(lerValoresArquivo("vermelho.txt"))
-mediaAmarelo = calcularMedia(lerValoresArquivo("amarelo.txt"))
-mediaAzul = calcularMedia(lerValoresArquivo("azul.txt"))
+mediaAmarelo = calcularMedia(lerValoresArquivoSCE("coresSce/amarelo.sce"))
+mediaAzul = calcularMedia(lerValoresArquivoSCE("coresSce/azul.sce"))
+mediaBranco = calcularMedia(lerValoresArquivoSCE("coresSce/branco.sce"))
+mediaCinza = calcularMedia(lerValoresArquivoSCE("coresSce/cinza.sce"))
+mediaCreme = calcularMedia(lerValoresArquivoSCE("coresSce/creme.sce"))
+mediaPreto = calcularMedia(lerValoresArquivoSCE("coresSce/preto.sce"))
+mediaVerde = calcularMedia(lerValoresArquivoSCE("coresSce/verde.sce"))
+mediaVermelho = calcularMedia(lerValoresArquivoSCE("coresSce/vermelho.sce"))
 
-print("Medias cor Vermelho:",mediaVermelho)
-print("Medias cor Amarelo:",mediaAmarelo)
-print("Medias cor Azul:",mediaAzul)
-valores = [mediaVermelho, mediaAmarelo, mediaAzul]
+valores = [mediaAmarelo, mediaAzul, mediaBranco, mediaCinza, mediaCreme, mediaPreto, mediaVerde, mediaVermelho]
 desenharGraficoRGB(valores)
