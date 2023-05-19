@@ -36,14 +36,17 @@ def calcularMedia(listaValores):
         m.append(n/len(listaValores))
     return m
 
+# Calcula Z =[ y - f(x) ]
 def Z(y, x, teta):
     z = np.zeros_like(y)
     for i in range(len(y)):
         z[i] = y[i] - (teta[0]*x[i] + teta[1])
     return z
 
+# Calcula o Jacobiano
 def J(x, teta):
     jacobian = np.zeros((len(x), len(teta)))
+    # calculo do Jacobiano da funcao de erro
     for i in range(len(x)):
         jacobian[i, :] = [-x[i], -1]
     return jacobian
