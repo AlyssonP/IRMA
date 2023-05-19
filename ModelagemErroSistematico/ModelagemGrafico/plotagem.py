@@ -12,6 +12,20 @@ def lerValoresArquivo(nome):
         listaValores.append(aux)
     return listaValores
 
+# Leitura de Arquivo SCE
+def lerValoresArquivoSCE(nome):
+    with open(nome) as ler:
+        lista = ler.read().split(";\n")
+    e = lista[0].split("\n")[2]
+    lista[0] = e
+    listaValores = []
+    for l in lista[:-1]:
+        aux = []
+        for n in l.split():
+            aux.append(float(n))
+        listaValores.append(aux)
+    return listaValores
+
 def calcularMedia(listaValores):
     l = [0,0,0,0,0,0]
     for lv in listaValores:
@@ -49,13 +63,14 @@ def desenharGrafico(x, y1, y2, cor, pdGrafico):
     plt.scatter(x,y1, facecolors='none', edgecolors=cor)
     plt.scatter(x,y2, color=cor)
 
+
 def calculoX(rgbL,rgbR):
     ve = np.array(rgbL)
     vv = np.array(rgbR)
     y = ve - vv #Erro sistematico
     x = np.array(rgbL)
     estado = GaussNewtonI(y,x,[1,0],100)
-    eixoX = ve - estado[0]*x + estado[1]
+    eixoX = ve - (estado[0]*x + estado[1])
     return eixoX
 
 def desenharGraficoRGB(valores):
@@ -83,6 +98,7 @@ def desenharGraficoRGB(valores):
 
     plt.show()
 
+# minha medição no lab
 mediaVermelho = calcularMedia(lerValoresArquivo("coresLidas/vermelho.txt"))
 mediaAzul = calcularMedia(lerValoresArquivo("coresLidas/azul.txt"))
 mediaAzulClaro = calcularMedia(lerValoresArquivo("coresLidas/azulClaro.txt"))
@@ -91,6 +107,18 @@ mediaVerde = calcularMedia(lerValoresArquivo("coresLidas/verde.txt"))
 mediaOutroVerde = calcularMedia(lerValoresArquivo("coresLidas/outroVerde.txt"))
 mediaAmarelo = calcularMedia(lerValoresArquivo("coresLidas/amarelo.txt"))
 mediaOutroAmarelo = calcularMedia(lerValoresArquivo("coresLidas/outroAmarelo.txt"))
-
 valores = [mediaVermelho, mediaAzul, mediaAzulClaro, mediaRosa, mediaVerde, mediaOutroVerde, mediaAmarelo, mediaOutroAmarelo]
+
+# Medição do professor
+# mediaAmarelo = calcularMedia(lerValoresArquivoSCE("coresProfessor/amarelo.sce"))
+# mediaAzul = calcularMedia(lerValoresArquivoSCE("coresProfessor/azul.sce"))
+# mediaBranco = calcularMedia(lerValoresArquivoSCE("coresProfessor/branco.sce"))
+# mediaCinza = calcularMedia(lerValoresArquivoSCE("coresProfessor/cinza.sce"))
+# mediaCreme = calcularMedia(lerValoresArquivoSCE("coresProfessor/creme.sce"))
+# mediaPreto = calcularMedia(lerValoresArquivoSCE("coresProfessor/preto.sce"))
+# mediaVerde = calcularMedia(lerValoresArquivoSCE("coresProfessor/verde.sce"))
+# mediaVermelho = calcularMedia(lerValoresArquivoSCE("coresProfessor/vermelho.sce"))
+
+# valores = [mediaAmarelo,mediaAzul,mediaBranco,mediaCinza,mediaCreme,mediaPreto,mediaVerde ,mediaVermelho]
+
 desenharGraficoRGB(valores)
