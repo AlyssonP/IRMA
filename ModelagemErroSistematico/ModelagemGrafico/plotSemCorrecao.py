@@ -22,40 +22,6 @@ def calcularMedia(listaValores):
         m.append(n/len(listaValores))
     return m
 
-def Z(y, x, teta):
-    z = np.zeros_like(y)
-    for i in range(len(y)):
-        z[i] = y[i] - (teta[0]*x[i] + teta[1])
-    return z
-
-def J(x, teta):
-    jacobian = np.zeros((len(x), len(teta)))
-    for i in range(len(x)):
-        jacobian[i, :] = [-x[i], -1]
-    return jacobian
-
-def GaussNewtonI(Y, X, valorInicial, n):
-    estado = valorInicial
-    for i in range(n):
-        Z1 = Z(Y, X, estado)
-        J1 = J(X, estado)
-        # "J1.T" matriz transposta de J1, "@"" realiza a multiplicação matricial
-        incremento = -np.linalg.inv(J1.T @ J1) @ J1.T @ Z1
-        estado = estado + incremento
-    return estado
-
-def desenharGrafico(x, y1, y2, cor, pdGrafico):
-    plt.subplot(pdGrafico[0],pdGrafico[1],pdGrafico[2])
-    plt.scatter(x,y1, facecolors='none', edgecolors=cor)
-    plt.scatter(x,y2, color=cor)
-
-def calculoX(rgbL,rgbR):
-    y = np.array(rgbL)-np.array(rgbR) #Erro sistematico
-    x = np.array(rgbL)
-    estado = GaussNewtonI(y,x,[1,0],100)
-    eixoX = estado[0]*x+estado[1]
-    return eixoX
-
 def desenharGraficoRGB(valores):
     rgbL = [[],[],[]]
     rgbR = [[],[],[]]
@@ -70,8 +36,45 @@ def desenharGraficoRGB(valores):
         rgbL[2].append(n[2])
         rgbR[2].append(n[5])
     
-    eixoR = calculoX(rgbL[0],rgbR[0])
-    desenharGrafico(eixoR,rgbL[0],rgbR[0],"red",[3,1,1])
+    # Cores
+    # Red
+    xrRed = np.array(rgbR[0])
+    xlRed = np.array(rgbL[0])
+    ylRed = np.array(rgbL[0])
+    yrRed = np.array(rgbR[0])
+    # Green
+    xrGreen = np.array(rgbR[1])
+    xlGreen = np.array(rgbL[1])
+    ylGreen = np.array(rgbL[1])
+    yrGreen = np.array(rgbR[1])
+    # Blue
+    xrBlue = np.array(rgbR[2])
+    xlBlue = np.array(rgbL[2])
+    ylBlue = np.array(rgbL[2])
+    yrBlue = np.array(rgbR[2])
+
+
+    plt.subplot(3,2,1)
+    plt.scatter(xrRed,ylRed, facecolors='none', edgecolors='r')
+    plt.scatter(xrRed,yrRed, color="red")
+
+    plt.subplot(3,2,3)
+    plt.scatter(xrGreen,ylGreen, facecolors='none', edgecolors='g')
+    plt.scatter(xrGreen,yrGreen, color="green")
+
+    plt.subplot(3,2,5)
+    plt.scatter(xrBlue,ylBlue, facecolors='none', edgecolors='b')
+    plt.scatter(xrBlue,yrBlue, color="blue")
+
+    # valores de referência como também aos valores medidos
+    plt.subplot(3,2,2)
+    plt.scatter(xrRed,ylRed-yrRed, color="red", edgecolors='black')
+
+    plt.subplot(3,2,4)
+    plt.scatter(xrGreen,ylGreen-yrGreen, color="green", edgecolors='black')
+
+    plt.subplot(3,2,6)
+    plt.scatter(xrBlue,ylBlue-yrBlue, color="blue", edgecolors='black')
 
     plt.show()
 
@@ -85,4 +88,5 @@ mediaAmarelo = calcularMedia(lerValoresArquivo("coresLidas/amarelo.txt"))
 mediaOutroAmarelo = calcularMedia(lerValoresArquivo("coresLidas/outroAmarelo.txt"))
 
 valores = [mediaVermelho, mediaAzul, mediaAzulClaro, mediaRosa, mediaVerde, mediaOutroVerde, mediaAmarelo, mediaOutroAmarelo]
+
 desenharGraficoRGB(valores)
