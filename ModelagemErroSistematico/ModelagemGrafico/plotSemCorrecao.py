@@ -38,43 +38,36 @@ def desenharGraficoRGB(valores):
     
     # Cores
     # Red
-    xrRed = np.array(rgbR[0])
-    xlRed = np.array(rgbL[0])
+    rRed = np.array(rgbR[0])
     ylRed = np.array(rgbL[0])
-    yrRed = np.array(rgbR[0])
     # Green
-    xrGreen = np.array(rgbR[1])
-    xlGreen = np.array(rgbL[1])
-    ylGreen = np.array(rgbL[1])
-    yrGreen = np.array(rgbR[1])
+    rGreen = np.array(rgbR[1])
+    lGreen = np.array(rgbL[1])
     # Blue
-    xrBlue = np.array(rgbR[2])
-    xlBlue = np.array(rgbL[2])
-    ylBlue = np.array(rgbL[2])
-    yrBlue = np.array(rgbR[2])
-
+    rBlue = np.array(rgbR[2])
+    lBlue = np.array(rgbL[2])
 
     plt.subplot(3,2,1)
-    plt.scatter(xrRed,ylRed, facecolors='none', edgecolors='r')
-    plt.scatter(xrRed,yrRed, color="red")
+    plt.scatter(rRed,ylRed, facecolors='none', edgecolors='r')
+    plt.scatter(rRed,rRed, color="red")
 
     plt.subplot(3,2,3)
-    plt.scatter(xrGreen,ylGreen, facecolors='none', edgecolors='g')
-    plt.scatter(xrGreen,yrGreen, color="green")
+    plt.scatter(rGreen,lGreen, facecolors='none', edgecolors='g')
+    plt.scatter(rGreen,rGreen, color="green")
 
     plt.subplot(3,2,5)
-    plt.scatter(xrBlue,ylBlue, facecolors='none', edgecolors='b')
-    plt.scatter(xrBlue,yrBlue, color="blue")
+    plt.scatter(rBlue,lBlue, facecolors='none', edgecolors='b')
+    plt.scatter(rBlue,rBlue, color="blue")
 
     # valores de referência como também aos valores medidos
     plt.subplot(3,2,2)
-    plt.scatter(xrRed,ylRed-yrRed, color="red", edgecolors='black')
+    plt.scatter(rRed,ylRed-rRed, color="red", edgecolors='black')
 
     plt.subplot(3,2,4)
-    plt.scatter(xrGreen,ylGreen-yrGreen, color="green", edgecolors='black')
+    plt.scatter(rGreen,lGreen-rGreen, color="green", edgecolors='black')
 
     plt.subplot(3,2,6)
-    plt.scatter(xrBlue,ylBlue-yrBlue, color="blue", edgecolors='black')
+    plt.scatter(rBlue,lBlue-rBlue, color="blue", edgecolors='black')
 
     plt.show()
 

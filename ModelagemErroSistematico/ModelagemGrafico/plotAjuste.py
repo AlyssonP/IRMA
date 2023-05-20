@@ -77,8 +77,8 @@ def desenharGraficoRGB(valores):
 
     # Cores
     # Red
-    lRed = np.array(rgbL[0])
     rRed = np.array(rgbR[0])
+    lRed = np.array(rgbL[0])
     # Green
     rGreen = np.array(rgbR[1])
     lGreen = np.array(rgbL[1])
@@ -87,17 +87,17 @@ def desenharGraficoRGB(valores):
     lBlue = np.array(rgbL[2])
 
     # Função de ajuste
-    y = lRed - rRed
-    x = lRed
-    estadoRed = GaussNewtonI(y,x,[1,0],100)
+    yR = lRed - rRed
+    xR = lRed
+    estadoRed = GaussNewtonI(yR,xR,[1,0],100)
 
-    y = lGreen - rGreen
-    x = lGreen
-    estadoGreen = GaussNewtonI(y,x,[1,0],100)
+    yG = lGreen - rGreen
+    xG = lGreen
+    estadoGreen = GaussNewtonI(yG,xG,[1,0],100)
 
-    y = lBlue - rBlue
-    x = lBlue
-    estadoBlue = GaussNewtonI(y,x,[1,0],100)
+    yB = lBlue - rBlue
+    xB = lBlue
+    estadoBlue = GaussNewtonI(yB,xB,[1,0],100)
 
     # Plotragem do gráfico das mediações não ajustadas
     plt.figure()
