@@ -1,5 +1,3 @@
-import numpy as np
-
 # Leitura de Arquivo SCE
 def lerValoresArquivoSCE(nome):
     with open(nome) as ler:
@@ -48,22 +46,21 @@ def calculoMSCor(vector,p):
     return M, S
 
 def calcularMiSgimaCor(vector):
-    m = [0, 0, 0]
-    m2 = [0, 0, 0]
-vermelho = lerValoresArquivo("coresLidas/vermelho.txt")
-rlVermelho = calculoMSCor(vermelho,0)
-glVermelho = calculoMSCor(vermelho,1)
-blVermelho = calculoMSCor(vermelho,2)
-print(rlVermelho)
-print(glVermelho)
-print(blVermelho)
-# mediaVermelho = calcularMedia(lerValoresArquivo("coresLidas/vermelho.txt"))
-# mediaAzul = calcularMedia(lerValoresArquivo("coresLidas/azul.txt"))
-# mediaAzulClaro = calcularMedia(lerValoresArquivo("coresLidas/azulClaro.txt"))
-# mediaRosa = calcularMedia(lerValoresArquivo("coresLidas/rosa.txt"))
-# mediaVerde = calcularMedia(lerValoresArquivo("coresLidas/verde.txt"))
-# mediaOutroVerde = calcularMedia(lerValoresArquivo("coresLidas/outroVerde.txt"))
-# mediaAmarelo = calcularMedia(lerValoresArquivo("coresLidas/amarelo.txt"))
-# mediaOutroAmarelo = calcularMedia(lerValoresArquivo("coresLidas/outroAmarelo.txt"))
+    sigma = []
+    mi = []
+    for i in range(6):
+        cal = calculoMSCor(vector,i)
+        mi.append(cal[0])
+        sigma.append(cal[1])
+    return mi, sigma
 
-# valores = [mediaVermelho, mediaAzul, mediaAzulClaro, mediaRosa, mediaVerde, mediaOutroVerde, mediaAmarelo, mediaOutroAmarelo]
+nomeCores = ["amarelo","azul","azulClaro","outroAmarelo","outroVerde","rosa","verde","vermelho"]
+cores = {}
+for cor in nomeCores:
+    valoresCor = lerValoresArquivo("coresLidas/"+cor+".txt")
+    cores[cor] = calcularMiSgimaCor(valoresCor)
+
+for nome, valores in cores.items():
+    print("Cor:",nome)
+    print("Mi:",valores[0])
+    print("Sigma:",valores[1])

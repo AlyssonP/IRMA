@@ -11,17 +11,16 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
-def valoresCor(n):
-    cor  = []
-    for i in range(n):
+sensorLeft =  ColorSensor(Port.S1)
+sensorRight = ColorSensor(Port.S4)
 
-def sigma(m2,n,M)
+def sigma(m2,n,M):
     return (m2/n - M**2)**(1/2)
 
-def Mi(m,n)
+def Mi(m,n):
     return m/n
 
-def calculoMS(n,lado):
+def calculoMS(n):
     left = sensorLeft.rgb()
     right = sensorRight.rgb()
     m = [0, 0, 0]
@@ -38,8 +37,8 @@ def calculoMS(n,lado):
             m[r] += s
             m2[r] += s**2
 
-    M = [Mi(ml[0],n), Mi(ml[1],n), Mi(ml[1],n), Mi(m[0],n), Mi(m[1],n), Mi(m[1],n)]
-    S = [sigma(m2l[0,n,M[3]]), sigma(m2l[0,n,M[4]]), sigma(m2l[0,n,M[5]]), sigma(m2[0,n,M[0]]), sigma(m2[0,n,M[1]]), sigma(m2[0,n,M[2]])]
+    M = [Mi(ml[0],n), Mi(ml[1],n), Mi(ml[2],n), Mi(m[0],n), Mi(m[1],n), Mi(m[2],n)]
+    S = [sigma(m2l[0],n,M[0]), sigma(m2l[1],n,M[1]), sigma(m2l[2],n,M[2]), sigma(m2[0],n,M[3]), sigma(m2[1],n,M[4]), sigma(m2[2],n,M[5])]
     
     return M, S
 
@@ -50,8 +49,12 @@ while(Button.CENTER not in ev3.buttons.pressed()):
     if(Button.LEFT in ev3.buttons.pressed()):
         cor = str(input("Qual cor vai medir? "))
         res = calculoMS(50)
-        print("Sigma:",res[1])
-        print("Mi:",res[0])
+        print("Sensor Left")
+        print("Sigma:",res[1][:3])
+        print("Mi:",res[0][:3])
+        print("Sensor Right")
+        print("Sigma:",res[1][3:])
+        print("Mi:",res[0][3:])
 
 
 # Write your program here.
