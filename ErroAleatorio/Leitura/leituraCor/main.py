@@ -53,9 +53,12 @@ ev3 = EV3Brick()
 
 cores = {}
 
+ev3.speaker.beep()
+
 while(Button.CENTER not in ev3.buttons.pressed()):
     buttoes = ev3.buttons.pressed()
     if(Button.LEFT in buttoes):
+        ev3.speaker.beep()
         cor = str(input("Qual cor vai medir? "))
         res = calculoMS(50)
         cores[cor] = res
@@ -66,6 +69,7 @@ while(Button.CENTER not in ev3.buttons.pressed()):
         print("Sigma:",res[1][3:])
         print("Mi:",res[0][3:])
     if(Button.RIGHT in buttoes):
+        ev3.speaker.beep()
         left = sensorLeft.rgb()
         right = sensorRight.rgb()
         for cor, valores in cores.items():
@@ -76,6 +80,7 @@ while(Button.CENTER not in ev3.buttons.pressed()):
                (valores[0][4] - valores[1][4] <= right[1] >= valores[0][4] + valores[1][4]) and 
                (valores[0][5] - valores[1][5] <= right[2] >= valores[0][5] + valores[1][5]))):
                 print(cor)
+                ev3.speaker.beep()
 
 
 # Write your program here.
