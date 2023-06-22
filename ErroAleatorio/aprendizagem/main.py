@@ -11,8 +11,8 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
-sensorLeft =  ColorSensor(Port.S1)
-sensorRight = ColorSensor(Port.S4)
+sensorLeft =  ColorSensor(Port.S3)
+sensorRight = ColorSensor(Port.S2)
 
 def sigma(m2,n,M):
     return (m2/n - M**2)**(1/2)
@@ -49,10 +49,11 @@ cores = {}
 
 ev3.speaker.beep()
 
-ev3.speaker.set_speech_options('pt-br','m3')
+#ev3.speaker.set_speech_options('pt-br','m3')
 
 sensores = (sensorLeft, sensorRight)
 
+print("Escolha as opções: LEFT(ler) e RIGHT(diz)")
 while(Button.CENTER not in ev3.buttons.pressed()):
     buttoes = ev3.buttons.pressed()
     if(Button.LEFT in buttoes):
@@ -67,16 +68,20 @@ while(Button.CENTER not in ev3.buttons.pressed()):
         right = sensorRight.rgb()
         falar = "Não entendi, como é amigo?"
         for cor, valores in cores.items():
-            if(((valores[0][0] - valores[1][0] <= left[0] >= valores[0][0] + valores[1][0]) and 
-               (valores[0][1] - valores[1][1] <= left[1] >= valores[0][1] + valores[1][1]) and 
-               (valores[0][2] - valores[1][2] <= left[2] >= valores[0][2] + valores[1][2])) and
-               ((valores[0][3] - valores[1][3] <= right[0] >= valores[0][3] + valores[1][3]) and 
-               (valores[0][4] - valores[1][4] <= right[1] >= valores[0][4] + valores[1][4]) and 
-               (valores[0][5] - valores[1][5] <= right[2] >= valores[0][5] + valores[1][5]))):
-                print(cor)
-                falar = cor
-                ev3.speaker.beep()
-        ev3.speaker.say(falar)
+            print(left)
+            print(reht)
+            print(valores)
+            # if(((valores[0][0] - valores[1][0] <= left[0] >= valores[0][0] + valores[1][0]) and 
+            #    (valores[0][1] - valores[1][1] <= left[1] >= valores[0][1] + valores[1][1]) and 
+            #    (valores[0][2] - valores[1][2] <= left[2] >= valores[0][2] + valores[1][2])) and
+            #    ((valores[0][3] - valores[1][3] <= right[0] >= valores[0][3] + valores[1][3]) and 
+            #    (valores[0][4] - valores[1][4] <= right[1] >= valores[0][4] + valores[1][4]) and 
+            #    (valores[0][5] - valores[1][5] <= right[2] >= valores[0][5] + valores[1][5]))):
+            #     print(cor)
+            #     falar = cor
+            #     ev3.speaker.beep()
+        print(falar)
+        #ev3.speaker.say(falar)
 
 
 # Write your program here.
