@@ -11,6 +11,7 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
+
 sensorLeft =  ColorSensor(Port.S3)
 sensorRight = ColorSensor(Port.S2)
 
@@ -31,10 +32,11 @@ def calculoMS(n, sensores):
         for l in range(3):
             ml[l] += ll[l]
             m2l[l] += ll[l]**2
+        
         lr = sensorRight.rgb()
         for r in range(3):
             m[r] += lr[r]
-            m2[r] += lr[r]**2
+            m2verde[r] += lr[r]**2
 
     M = [Mi(ml[0],n), Mi(ml[1],n), Mi(ml[2],n), Mi(m[0],n), Mi(m[1],n), Mi(m[2],n)]
     S = [sigma(m2l[0],n,M[0]), sigma(m2l[1],n,M[1]), sigma(m2l[2],n,M[2]), sigma(m2[0],n,M[3]), sigma(m2[1],n,M[4]), sigma(m2[2],n,M[5])]
@@ -59,8 +61,9 @@ while(Button.CENTER not in ev3.buttons.pressed()):
     if(Button.LEFT in buttoes):
         ev3.speaker.beep()
         cor = str(input("Qual cor vai medir? "))
-        res = calculoMS(50, sensores)
+        res = calculoMS(800, sensores)
         cores[cor] = res
+        print("Nova cor aprendida!")
 
     if(Button.RIGHT in buttoes):
         ev3.speaker.beep()
@@ -68,19 +71,24 @@ while(Button.CENTER not in ev3.buttons.pressed()):
         right = sensorRight.rgb()
         falar = "Não entendi, como é amigo?"
         for cor, valores in cores.items():
-            print(left)
-            print(reht)
-            print(valores)
-            # if(((valores[0][0] - valores[1][0] <= left[0] >= valores[0][0] + valores[1][0]) and 
-            #    (valores[0][1] - valores[1][1] <= left[1] >= valores[0][1] + valores[1][1]) and 
-            #    (valores[0][2] - valores[1][2] <= left[2] >= valores[0][2] + valores[1][2])) and
-            #    ((valores[0][3] - valores[1][3] <= right[0] >= valores[0][3] + valores[1][3]) and 
-            #    (valores[0][4] - valores[1][4] <= right[1] >= valores[0][4] + valores[1][4]) and 
-            #    (valores[0][5] - valores[1][5] <= right[2] >= valores[0][5] + valores[1][5]))):
-            #     print(cor)
-            #     falar = cor
-            #     ev3.speaker.beep()
-        print(falar)
+            print("cor: ",valores)
+            print("left: ",left," | right: ",right)
+            print(valores[1][0]*10)
+            # if(((valores[0][0] - (valores[1][0]*10) <= left[0] <= (valores[0][0]) + valores[1][0]*10) and 
+            #    (valores[0][1] - (valores[1][1]*10) <= left[1]  <= (valores[0][1]) + valores[1][1]*10) and 
+            #    (valores[0][2] - (valores[1][2]*10) <= left[2]  <= (valores[0][2]) + valores[1][2]*10)) and
+            #    ((valores[0][3] - (valores[1][3]*10) <= right[0] <= (valores[0][3]) + valores[1][3]*10) and 
+            #    (valores[0][4] - (valores[1][4]*10) <= right[1] <= (valores[0][4]) + valores[1][4]*10) and 
+            #    (valores[0][5] - (valores[1][5]*10) <= right[2] <= (valores[0][5]) + valores[1][5]*10))):
+            if((valores[0][0] - 10 <= right[0] <= (valores[0][0]) + 10) and 
+               (valores[0][1] - 10 <= right[1]  <= (valores[0][1]) + 10) and 
+               (valores[0][2] - 10 <= right[2]  <= (valores[0][2]) + 10) and
+               (valores[0][3] - 10 <= left[0] <= (valores[0][3]) + 10) and 
+               (valores[0][4] - 10 <= left[1] <= (valores[0][4]) + 10) and 
+               (valores[0][5] - 10 <= left[2] <= (valores[0][5]) + 10)):
+                falar = cor
+                ev3.speaker.beep()
+        print("Você mostrou:",falar)
         #ev3.speaker.say(falar)
 
 
