@@ -94,7 +94,7 @@ def detectaNovoEstado(ev3, cronometro, estado, MotorSensor, parametros):
     elif((Button.CENTER in botoes) and (estado == "ANDANDO") and (cronometro.time()>=TKEYPRESS)):
         novoEstado = "PARADO"
         cronometro.reset()
-    elif(True):
+    elif((estado == "ANDANDO") and False):
         pass
 
     parametros = (PoCorL, KpL, PoMotorL, PoCorR, KpR, PoMotorR)
@@ -135,9 +135,15 @@ def executaEstado(ev3, MotorSensor, estado, parametros):
     elif(estado == "VIRARDIREITA"):
         motorLeft.dc(50)
         motorRight.dc(50)
-        sleep(0.4)
-        motorLeft.dc(-50)
-        motorRight.dc(50)
+        time.sleep(0.4)
+        motorLeft.brake()
+        motorRight.brake()
+        # while():
+        #     motorLeft.dc(-40)
+        #     motorRight.dc(40)
+
+        
+
 
 def enviaDados(conn, MotorSensor, contador):
     (motorLeft, motorRight, infrared, corLeft, corRight) = MotorSensor
@@ -161,6 +167,9 @@ def enviaDados(conn, MotorSensor, contador):
     udp.sendto(msg, dest)
 
     return contador
+
+def aprendizagem(ev3, corLeft, corRight):
+    pass
 
 def main(argv):
     rede = False
@@ -192,15 +201,23 @@ def main(argv):
 
     parametros = (PoCorL, KpL, PoMotorL, PoCorR, KpR, PoMotorR)
     estado = "PARADO"
+    calibrado = False
     ev3.speaker.beep()
     while(True):
+        botoes = ev3.buttons.pressed()
+        if(Button.UP in botoes):
+            ev3.speaker.say("Modo aprendizagem habilitado.")
+            aprendizagem(ev3, corLeft, corRight)
+            ev3.speaker.say("Aprendi o que eu queria.")
+        
         if(rede):
             contador = enviaDados(conn, MotorSensor, contador)
         
-        NovoEstado, parametros = detectaNovoEstado(ev3, cronometro, estado, MotorSensor, parametros)
-        
-        executaEstado(ev3, MotorSensor, NovoEstado, parametros)
-        
-        estado = NovoEstado
+        if(Button.CENTER in botoes):
+            NovoEstado, parametros = detectaNovoEstado(ev3, cronometro, estado, MotorSensor, parametros)
+            
+            executaEstado(ev3, MotorSensor, NovoEstado, parametros)
+            
+            estado = NovoEstado
 
 main(sys.argv)
