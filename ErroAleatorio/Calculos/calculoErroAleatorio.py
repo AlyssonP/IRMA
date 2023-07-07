@@ -23,3 +23,4 @@ def calculoMS(cor):
 print(calculoMS(r))
 print(calculoMS(g))
 print(calculoMS(b))
+

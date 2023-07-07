@@ -92,13 +92,13 @@ def passear(ev3, MotorSensor):
             motorLeft.brake()
             break
 
-        if(infrared != None and infrared.distance()<= 10):
+        if(infrared != None and infrared.distance() <= 10):
             motorRight.brake()
             motorLeft.brake() 
     ev3.speaker.say("Fim do passeio!")
 
 def leituraCor(ev3, corLeft, corRight, iteracoes):
-    (corRL, corGL, corBL, corRR, corGR, corBR) = (0,0,0,0,0,0)
+    corRL, corGL, corBL, corRR, corGR, corBR = 0,0,0,0,0,0
     for i in range(iteracoes):
         medicaoLeft = corLeft.rgb()
         medicaoRight = corRight.rgb()
@@ -120,7 +120,47 @@ def leituraCor(ev3, corLeft, corRight, iteracoes):
     corBR = corBR/iteracoes
 
     return (corRL, corGL, corBL, corRR, corGR, corBR)
+
+def Sig(m2,n,M):
+    return (m2/n - M**2)**(1/2)
+
+def Mi(m,n):
+    return m/n
+
+def leituraCorErroAleatorio(ev3, corLeft, corRight, iteracoes):
+    corRLM, corGLM, corBLM, corRRM, corGRM, corBRM = 0,0,0,0,0,0
+    corRLM2, corGLM2, corBLM2, corRRM2, corGRM2, corBRM2 = 0,0,0,0,0,0
+
+    for i in range(iteracoes):
+        medicaoLeft = corLeft.rgb()
+        medicaoRight = corRight.rgb()
         
+        corRLM += medicaoLeft[0]
+        corGLM += medicaoLeft[1]
+        corBLM += medicaoLeft[2]
+        corRLM2 += (medicaoLeft[0]**2)
+        corGLM2 += (medicaoLeft[1]**2)
+        corBLM2 += (medicaoLeft[2]**2)
+
+        corRRM += medicaoRight[0]
+        corGRM += medicaoRight[1]
+        corBRM += medicaoRight[2]
+        corRRM2 += (medicaoRight[0]**2)
+        corGRM2 += (medicaoRight[1]**2)
+        corBRM2 += (medicaoRight[2]**2)
+    
+    mi = [Mi(corRLM/iteracoes),Mi(corGLM/iteracoes),Mi(corBLM/iteracoes),
+          Mi(corRRM/iteracoes),Mi(corGRM/iteracoes),Mi(corBRM/iteracoes)]
+    
+    sig = [Sig(corRLM2,iteracoes,mi[0]),
+           Sig(corGLM2,iteracoes,mi[1]),
+           Sig(corBLM2,iteracoes,mi[2]),
+           Sig(corRRM2,iteracoes,mi[3]),
+           Sig(corGRM2,iteracoes,mi[4]),
+           Sig(corBRM2,iteracoes,mi[5])]
+    
+    return (mi, sig)
+
 def salvaCalibracao(leitura,nome):
     (corRL, corGL, corBL, corRR, corGR, corBR) = leitura
     arquivo = open(nome+".csv", "w")
@@ -136,21 +176,21 @@ def aprendizagem(ev3, MotorSensor):
         botoes = ev3.buttons.pressed()
         if(Button.LEFT in botoes):
             ev3.speaker.say("Aprendendo a cor ViraEsquerda")
-            corViraEsquerda = leituraCor(ev3, corLeft, corRight, 100)
+            corViraEsquerda = leituraCorErroAleatorio(ev3, corLeft, corRight, 100)
             referenciaCores["VIRAESQUERDA"] = corViraEsquerda
             print(corViraEsquerda)
             ev3.speaker.beep()
             
         if(Button.RIGHT in botoes):
             ev3.speaker.say("Aprendendo a cor ViraDireira")
-            corViraDireira = leituraCor(ev3, corLeft, corRight, 100)
+            corViraDireira = leituraCorErroAleatorio(ev3, corLeft, corRight, 100)
             referenciaCores["VIRADIREITA"] = corViraDireira
             print(corViraDireira)
             ev3.speaker.beep()
         
         if(Button.UP in botoes):
             ev3.speaker.say("Aprendendo a cor PARAR")
-            corParar = leituraCor(ev3, corLeft, corRight, 100)
+            corParar = leituraCorErroAleatorio(ev3, corLeft, corRight, 100)
             referenciaCores["PARADO"] = corParar
             print(corParar)
             ev3.speaker.beep()
@@ -162,12 +202,24 @@ def aprendizagem(ev3, MotorSensor):
 
 def compararCor(medicaoLeft, medicaoRight, corReferencia):
     sig = 2
-    if((medicaoLeft[0] - sig <= corReferencia[0] <= medicaoLeft[0] + sig) and
-       (medicaoLeft[1] - sig <= corReferencia[1] <= medicaoLeft[1] + sig) and
-       (medicaoLeft[2] - sig <= corReferencia[2] <= medicaoLeft[2] + sig) and
-       (medicaoRight[0] - sig <= corReferencia[3] <= medicaoRight[0] + sig) and
-       (medicaoRight[1] - sig <= corReferencia[4] <= medicaoRight[1] + sig) and
-       (medicaoRight[2] - sig <= corReferencia[5] <= medicaoRight[2] + sig)):
+    if((corReferencia[0] - sig <= medicaoLeft[0] <= corReferencia[0] + sig) and
+       (corReferencia[1] - sig <= medicaoLeft[1] <= corReferencia[1] + sig) and
+       (corReferencia[2] - sig <= medicaoLeft[2] <= corReferencia[2] + sig) and
+       (corReferencia[3] - sig <= medicaoRight[0] <= corReferencia[3] + sig) and
+       (corReferencia[4] - sig <= medicaoRight[1] <= corReferencia[4] + sig) and
+       (corReferencia[5] - sig <= medicaoRight[2] <= corReferencia[5] + sig)):
+        return True
+    return False
+
+def compararCorErroAleatorio(medicaoLeft, medicaoRight, corReferencia):
+    x = 1
+    (mi, sig) = corReferencia
+    if(((mi[0] - (sig[0]*x)) <= medicaoLeft[0]  <= (mi[0] + (sig[0]*x))) and
+       ((mi[1] - (sig[1]*x)) <= medicaoLeft[1]  <= (mi[1] + (sig[1]*x))) and
+       ((mi[2] - (sig[2]*x)) <= medicaoLeft[2]  <= (mi[2] + (sig[2]*x))) and
+       ((mi[3] - (sig[3]*x)) <= medicaoRight[0] <= (mi[3] + (sig[3]*x))) and
+       ((mi[4] - (sig[4]*x)) <= medicaoRight[1] <= (mi[4] + (sig[4]*x))) and
+       ((mi[5] - (sig[5]*x)) <= medicaoRight[2] <= (mi[5] + (sig[5]*x)))):
         return True
     return False
 
@@ -325,8 +377,13 @@ main()
 ev3.speaker.beep()
 
 """
-    PARA O ROBÔ CONSEGUIR SEGUIR FAIXA É PRECISO ENSINAR O ROBÔ
-    ELE PODE CONTER UM BUGS, PORQUE NÃO FOI TESTE EM UM ROBÔ LEGO PESSOALMENTE
+    PROGRAMA PARA O ROBÔ CONSEGUIR SEGUIR FAIXA É PRECISO ENSINAR O ROBÔ AS CORES NECESSÁRIAS.
+    ELE PODE CONTER UNS BUGS, PORQUE NÃO FOI POSSIVEL TESTAR EM UM ROBÔ LEGO PESSOALMENTE.
+    ESTE PROGRAMA CONTÉM TRATAMENTO DE ERRO ALEATÓRIO PARA CALIBRAÇÃO DE SENSORES.
     
-    DEV: ALYSSON. ESTUDANTE DE TSI
+    DEVS: 
+        ALYSSON PEREIRA: https://github.com/AlyssonP
+        YAGOR KALENIEVES: https://github.com/klnyagor
+    ESTUDANTES DE TSI NO IFPB CAMPUS GUARABIRA
+
 """
