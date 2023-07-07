@@ -15,34 +15,57 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 sensorLeft =  ColorSensor(Port.S3)
 sensorRight = ColorSensor(Port.S2)
 
-def sigma(m2,n,M):
+def Sig(m2,n,M):
     return (m2/n - M**2)**(1/2)
 
 def Mi(m,n):
     return m/n
 
-def calculoMS(n, sensores):
-    (sensorLeft, sensorRight) = sensores
-    m = [0, 0, 0]
-    m2 = [0, 0, 0]
-    ml = [0, 0, 0]
-    m2l = [0, 0, 0]
-    for i in range(n):
-        ll = sensorLeft.rgb()
-        for l in range(3):
-            ml[l] += ll[l]
-            m2l[l] += ll[l]**2
+def leituraCorErroAleatorio(ev3, corLeft, corRight, iteracoes):
+    corRLM, corGLM, corBLM, corRRM, corGRM, corBRM = 0,0,0,0,0,0
+    corRLM2, corGLM2, corBLM2, corRRM2, corGRM2, corBRM2 = 0,0,0,0,0,0
+
+    for i in range(iteracoes):
+        medicaoLeft = corLeft.rgb()
+        medicaoRight = corRight.rgb()
         
-        lr = sensorRight.rgb()
-        for r in range(3):
-            m[r] += lr[r]
-            m2[r] += lr[r]**2
+        corRLM += medicaoLeft[0]
+        corGLM += medicaoLeft[1]
+        corBLM += medicaoLeft[2]
+        corRLM2 += (medicaoLeft[0]**2)
+        corGLM2 += (medicaoLeft[1]**2)
+        corBLM2 += (medicaoLeft[2]**2)
 
-    M = [Mi(ml[0],n), Mi(ml[1],n), Mi(ml[2],n), Mi(m[0],n), Mi(m[1],n), Mi(m[2],n)]
-    S = [sigma(m2l[0],n,M[0]), sigma(m2l[1],n,M[1]), sigma(m2l[2],n,M[2]), sigma(m2[0],n,M[3]), sigma(m2[1],n,M[4]), sigma(m2[2],n,M[5])]
+        corRRM += medicaoRight[0]
+        corGRM += medicaoRight[1]
+        corBRM += medicaoRight[2]
+        corRRM2 += (medicaoRight[0]**2)
+        corGRM2 += (medicaoRight[1]**2)
+        corBRM2 += (medicaoRight[2]**2)
     
-    return M, S
+    mi = [Mi(corRLM/iteracoes),Mi(corGLM/iteracoes),Mi(corBLM/iteracoes),
+          Mi(corRRM/iteracoes),Mi(corGRM/iteracoes),Mi(corBRM/iteracoes)]
+    
+    sig = [Sig(corRLM2,iteracoes,mi[0]),
+           Sig(corGLM2,iteracoes,mi[1]),
+           Sig(corBLM2,iteracoes,mi[2]),
+           Sig(corRRM2,iteracoes,mi[3]),
+           Sig(corGRM2,iteracoes,mi[4]),
+           Sig(corBRM2,iteracoes,mi[5])]
+    
+    return (mi, sig)
 
+def compararCorErroAleatorio(medicaoLeft, medicaoRight, corReferencia):
+    x = 3
+    (mi, sig) = corReferencia
+    if(((mi[0] - (sig[0]*x)) <= medicaoLeft[0]  <= (mi[0] + (sig[0]*x))) and
+       ((mi[1] - (sig[1]*x)) <= medicaoLeft[1]  <= (mi[1] + (sig[1]*x))) and
+       ((mi[2] - (sig[2]*x)) <= medicaoLeft[2]  <= (mi[2] + (sig[2]*x))) and
+       ((mi[3] - (sig[3]*x)) <= medicaoRight[0] <= (mi[3] + (sig[3]*x))) and
+       ((mi[4] - (sig[4]*x)) <= medicaoRight[1] <= (mi[4] + (sig[4]*x))) and
+       ((mi[5] - (sig[5]*x)) <= medicaoRight[2] <= (mi[5] + (sig[5]*x)))):
+        return True
+    return False
 
 # Create your objects here.
 ev3 = EV3Brick()
@@ -61,7 +84,7 @@ while(Button.CENTER not in ev3.buttons.pressed()):
     if(Button.LEFT in buttoes):
         ev3.speaker.beep()
         cor = str(input("Qual cor vai medir? "))
-        res = calculoMS(800, sensores)
+        res = leituraCorErroAleatorio(ev3,sensorLeft,sensorRight)
         cores[cor] = res
         print("Nova cor aprendida!")
 
@@ -74,18 +97,7 @@ while(Button.CENTER not in ev3.buttons.pressed()):
             print("cor: ",valores)
             print("left: ",left," | right: ",right)
             print(valores[1][0]*10)
-            # if(((valores[0][0] - (valores[1][0]*10) <= left[0] <= (valores[0][0]) + valores[1][0]*10) and 
-            #    (valores[0][1] - (valores[1][1]*10) <= left[1]  <= (valores[0][1]) + valores[1][1]*10) and 
-            #    (valores[0][2] - (valores[1][2]*10) <= left[2]  <= (valores[0][2]) + valores[1][2]*10)) and
-            #    ((valores[0][3] - (valores[1][3]*10) <= right[0] <= (valores[0][3]) + valores[1][3]*10) and 
-            #    (valores[0][4] - (valores[1][4]*10) <= right[1] <= (valores[0][4]) + valores[1][4]*10) and 
-            #    (valores[0][5] - (valores[1][5]*10) <= right[2] <= (valores[0][5]) + valores[1][5]*10))):
-            if((valores[0][0] - 10 <= right[0] <= (valores[0][0]) + 10) and 
-               (valores[0][1] - 10 <= right[1]  <= (valores[0][1]) + 10) and 
-               (valores[0][2] - 10 <= right[2]  <= (valores[0][2]) + 10) and
-               (valores[0][3] - 10 <= left[0] <= (valores[0][3]) + 10) and 
-               (valores[0][4] - 10 <= left[1] <= (valores[0][4]) + 10) and 
-               (valores[0][5] - 10 <= left[2] <= (valores[0][5]) + 10)):
+            if(compararCorErroAleatorio(left, right, valores)):
                 falar = cor
                 ev3.speaker.beep()
         print("Você mostrou:",falar)
