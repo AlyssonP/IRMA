@@ -39,13 +39,13 @@ def detectMotoresSensores(ev3, falar):
         ev3.speaker.say("Motores encontrados")
     
     # Sensores
+    infrared = None
     try:
         infrared = InfraredSensor(Port.S1)
     except OSError:
         if falar:
             ev3.speaker.say("Sensor infravermelho não encontrado.")
             ev3.speaker.say("Conecte o sensor infravermelho na porta S1")
-        return
     
     try:
         corLeft = ColorSensor(Port.S3)
@@ -143,8 +143,6 @@ def executaEstado(ev3, MotorSensor, estado, parametros):
         #     motorRight.dc(40)
 
         
-
-
 def enviaDados(conn, MotorSensor, contador):
     (motorLeft, motorRight, infrared, corLeft, corRight) = MotorSensor
     (udp, dest) = conn
@@ -170,6 +168,45 @@ def enviaDados(conn, MotorSensor, contador):
 
 def aprendizagem(ev3, corLeft, corRight):
     pass
+
+def passear(ev3, MotorSensor):
+    (motorLeft, motorRight, infrared, corLeft, corRight) = MotorSensor
+    
+    while(True):
+        botoes = ev3.buttons.pressed()
+        #Botoes
+        if(Button.UP in botoes):
+            motorRight.run(200)
+            motorLeft.run(200)
+
+        if(Button.DOWN in botoes):
+            motorRight.run(-200)
+            motorLeft.run(-200)
+
+        if(Button.LEFT in botoes):
+            motorRight.run(200)
+            motorLeft.run(-200)
+
+        if(Button.RIGHT in botoes):
+            motorRight.run(-200)
+            motorLeft.run(200)
+
+        if(Button.CENTER in botoes):
+            motorRight.brake()
+            motorLeft.brake()
+            botao = ev3.buttons.pressed()
+            while(Button.CENTER not in botao):
+                if(Button.UP in botao):
+                    motorRight.run(200)
+                    motorLeft.run(200)
+                    break
+                if(Button.CENTER in botao):
+                    ev3.speaker.say("Fim do passeio")
+                    return
+
+        if(infrared != None and infrared.distance()<= 10):
+            motorRight.brake()
+            motorLeft.brake() 
 
 def main(argv):
     rede = False
@@ -205,6 +242,10 @@ def main(argv):
     ev3.speaker.beep()
     while(True):
         botoes = ev3.buttons.pressed()
+        if(Button.LELF in botoes):
+            ev3.speaker.say("Vamos passear")
+            passear(ev3, MotorSensor)
+        
         if(Button.UP in botoes):
             ev3.speaker.say("Modo aprendizagem habilitado.")
             aprendizagem(ev3, corLeft, corRight)

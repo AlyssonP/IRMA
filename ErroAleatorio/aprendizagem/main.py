@@ -36,7 +36,7 @@ def calculoMS(n, sensores):
         lr = sensorRight.rgb()
         for r in range(3):
             m[r] += lr[r]
-            m2verde[r] += lr[r]**2
+            m2[r] += lr[r]**2
 
     M = [Mi(ml[0],n), Mi(ml[1],n), Mi(ml[2],n), Mi(m[0],n), Mi(m[1],n), Mi(m[2],n)]
     S = [sigma(m2l[0],n,M[0]), sigma(m2l[1],n,M[1]), sigma(m2l[2],n,M[2]), sigma(m2[0],n,M[3]), sigma(m2[1],n,M[4]), sigma(m2[2],n,M[5])]
